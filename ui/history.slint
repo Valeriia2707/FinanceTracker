@@ -1,0 +1,472 @@
+// Рядок повної таблиці транзакцій
+component HistoryRow inherits Rectangle {
+    in property <string> tx_type: "Витрата";
+    in property <string> title;
+    in property <string> category_name;
+    in property <color> category_color;
+    in property <string> date_str;
+    in property <string> orig_amount;
+    in property <string> rate_val;
+    in property <string> uah_amount;
+    in property <bool> is_income: false;
+
+    height: 48px;
+
+    Rectangle {
+        y: parent.height - 1px;
+        height: 1px;
+        background: #17233f;
+    }
+
+    HorizontalLayout {
+        padding-left: 20px;
+        padding-right: 20px;
+        spacing: 14px;
+
+        // 1. Тип
+        Rectangle {
+            width: 80px;
+            HorizontalLayout {
+                alignment: start;
+                Rectangle {
+                    background: root.is_income ? #064e3b.transparentize(60%) : #881337.transparentize(60%);
+                    border-radius: 6px;
+                    border-width: 1px;
+                    border-color: root.is_income ? #10b981.transparentize(50%) : #f43f5e.transparentize(50%);
+                    height: 24px;
+                    y: (parent.height - self.height) / 2;
+
+                    HorizontalLayout {
+                        padding-left: 8px;
+                        padding-right: 8px;
+                        Text {
+                            text: root.tx_type;
+                            color: root.is_income ? #10b981 : #f43f5e;
+                            font-size: 11px;
+                            font-weight: 600;
+                            vertical-alignment: center;
+                        }
+                    }
+                }
+            }
+        }
+
+        // 2. Назва
+        Rectangle {
+            horizontal-stretch: 1;
+            HorizontalLayout {
+                alignment: start;
+                Text {
+                    text: root.title;
+                    color: #ffffff;
+                    font-size: 13px;
+                    vertical-alignment: center;
+                    overflow: elide;
+                }
+            }
+        }
+
+        // 3. Категорія
+        Rectangle {
+            width: 170px;
+            HorizontalLayout {
+                alignment: start;
+                Rectangle {
+                    background: root.category_color.transparentize(85%);
+                    border-radius: 6px;
+                    border-width: 1px;
+                    border-color: root.category_color.transparentize(50%);
+                    height: 24px;
+                    y: (parent.height - self.height) / 2;
+
+                    HorizontalLayout {
+                        padding-left: 10px;
+                        padding-right: 10px;
+                        Text {
+                            text: root.category_name;
+                            color: root.category_color;
+                            font-size: 11px;
+                            font-weight: 600;
+                            vertical-alignment: center;
+                        }
+                    }
+                }
+            }
+        }
+
+        // 4. Дата
+        Rectangle {
+            width: 110px;
+            HorizontalLayout {
+                alignment: start;
+                Text {
+                    text: root.date_str;
+                    color: #94a3b8;
+                    font-size: 13px;
+                    vertical-alignment: center;
+                }
+            }
+        }
+
+        // 5. Оригінальна сума
+        Rectangle {
+            width: 130px;
+            HorizontalLayout {
+                alignment: start;
+                Text {
+                    text: root.orig_amount;
+                    color: #ffffff;
+                    font-size: 13px;
+                    font-weight: 700;
+                    vertical-alignment: center;
+                }
+            }
+        }
+
+        // 6. Курс
+        Rectangle {
+            width: 70px;
+            HorizontalLayout {
+                alignment: start;
+                Text {
+                    text: root.rate_val;
+                    color: #94a3b8;
+                    font-size: 13px;
+                    vertical-alignment: center;
+                }
+            }
+        }
+
+        // 7. Сума (UAH)
+        Rectangle {
+            width: 120px;
+            HorizontalLayout {
+                alignment: end;
+                Text {
+                    text: root.uah_amount;
+                    color: root.is_income ? #10b981 : #f43f5e;
+                    font-size: 13px;
+                    font-weight: 700;
+                    vertical-alignment: center;
+                }
+            }
+        }
+
+        // 8. Дії
+        Rectangle {
+            width: 36px;
+            HorizontalLayout {
+                alignment: center;
+                Text {
+                    text: "🗑";
+                    color: #64748b;
+                    font-size: 14px;
+                    vertical-alignment: center;
+                    horizontal-alignment: center;
+                }
+            }
+        }
+    }
+}
+
+export component HistoryView inherits VerticalLayout {
+    padding: 24px;
+    spacing: 20px;
+    alignment: start;
+
+    // 1. Шапка сторінки
+    VerticalLayout {
+        spacing: 14px;
+
+        HorizontalLayout {
+            alignment: space-between;
+
+            VerticalLayout {
+                spacing: 4px;
+
+                Text {
+                    text: "Історія транзакцій";
+                    color: #ffffff;
+                    font-size: 22px;
+                    font-weight: 700;
+                }
+
+                Text {
+                    text: "Повний журнал записів із відображенням валют та курсів перерахунку";
+                    color: #64748b;
+                    font-size: 12px;
+                }
+            }
+
+            // Кнопка експорту CSV
+            VerticalLayout {
+                alignment: center;
+
+                Rectangle {
+                    height: 38px;
+                    background: #1e293b;
+                    border-radius: 8px;
+                    border-width: 1px;
+                    border-color: #334155;
+
+                    HorizontalLayout {
+                        padding-left: 14px;
+                        padding-right: 14px;
+                        spacing: 8px;
+                        alignment: center;
+
+                        Text {
+                            text: "📄";
+                            color: #10b981;
+                            font-size: 14px;
+                            vertical-alignment: center;
+                        }
+
+                        Text {
+                            text: "Експорт CSV";
+                            color: #ffffff;
+                            font-size: 13px;
+                            font-weight: 600;
+                            vertical-alignment: center;
+                        }
+                    }
+                }
+            }
+        }
+
+        // Лінія під заголовком
+        Rectangle {
+            height: 1px;
+            background: #1e293b;
+        }
+    }
+
+    // 2. Панель фільтрів
+    Rectangle {
+        height: 64px;
+        background: #0f172a;
+        border-radius: 12px;
+        border-width: 1px;
+        border-color: #1e293b;
+
+        // Вертикальне центрування всієї лінії всередині панелі
+        VerticalLayout {
+            alignment: center;
+            padding-left: 18px;
+            padding-right: 18px;
+
+            HorizontalLayout {
+                spacing: 12px;
+
+                // 1. Пошук (займає весь вільний простір зліва ~50-55%)
+                Rectangle {
+                    horizontal-stretch: 1;
+                    min-width: 250px;
+                    height: 38px;
+                    background: #070d1e;
+                    border-radius: 8px;
+                    border-width: 1px;
+                    border-color: #1e293b;
+
+                    HorizontalLayout {
+                        padding-left: 14px;
+                        padding-right: 14px;
+                        spacing: 10px;
+                        alignment: start;
+
+                        Text {
+                            text: "🔍";
+                            color: #64748b;
+                            font-size: 13px;
+                            vertical-alignment: center;
+                        }
+
+                        Text {
+                            text: "Пошук...";
+                            color: #64748b;
+                            font-size: 13px;
+                            vertical-alignment: center;
+                        }
+                    }
+                }
+
+                // 2. Дропдаун: Вересень
+                Rectangle {
+                    horizontal-stretch: 0;
+                    width: 130px;
+                    height: 38px;
+                    background: #070d1e;
+                    border-radius: 8px;
+                    border-width: 1px;
+                    border-color: #1e293b;
+
+                    HorizontalLayout {
+                        padding-left: 12px;
+                        padding-right: 12px;
+                        alignment: space-between;
+
+                        Text { text: "Вересень"; color: #ffffff; font-size: 12px; vertical-alignment: center; }
+                        Text { text: "⌵"; color: #64748b; font-size: 10px; vertical-alignment: center; }
+                    }
+                }
+
+                // 3. Дропдаун: Всі валюти
+                Rectangle {
+                    horizontal-stretch: 0;
+                    width: 130px;
+                    height: 38px;
+                    background: #070d1e;
+                    border-radius: 8px;
+                    border-width: 1px;
+                    border-color: #1e293b;
+
+                    HorizontalLayout {
+                        padding-left: 12px;
+                        padding-right: 12px;
+                        alignment: space-between;
+
+                        Text { text: "Всі валюти"; color: #ffffff; font-size: 12px; vertical-alignment: center; }
+                        Text { text: "⌵"; color: #64748b; font-size: 10px; vertical-alignment: center; }
+                    }
+                }
+
+                // 4. Дропдаун: Всі категорії (+10px ширше)
+                Rectangle {
+                    horizontal-stretch: 0;
+                    width: 140px;
+                    height: 38px;
+                    background: #070d1e;
+                    border-radius: 8px;
+                    border-width: 1px;
+                    border-color: #1e293b;
+
+                    HorizontalLayout {
+                        padding-left: 12px;
+                        padding-right: 12px;
+                        alignment: space-between;
+
+                        Text { text: "Всі категорії"; color: #ffffff; font-size: 12px; vertical-alignment: center; }
+                        Text { text: "⌵"; color: #64748b; font-size: 10px; vertical-alignment: center; }
+                    }
+                }
+
+                // 5. Кнопка: Скинути
+                Rectangle {
+                    horizontal-stretch: 0;
+                    width: 90px;
+                    height: 38px;
+                    background: #1e293b;
+                    border-radius: 8px;
+                    border-width: 1px;
+                    border-color: #334155;
+
+                    Text {
+                        text: "Скинути";
+                        color: #ffffff;
+                        font-size: 13px;
+                        font-weight: 500;
+                        horizontal-alignment: center;
+                        vertical-alignment: center;
+                    }
+                }
+            }
+        }
+    }
+
+    // 3. Таблиця транзакцій
+    Rectangle {
+        background: #0f172a;
+        border-radius: 14px;
+        border-width: 1px;
+        border-color: #1e293b;
+
+        VerticalLayout {
+            padding-left: 16px;
+            padding-right: 16px;
+            padding-top: 10px;
+            padding-bottom: 10px;
+
+            // Шапка таблиці
+            Rectangle {
+                height: 36px;
+
+                Rectangle {
+                    y: parent.height - 1px;
+                    height: 1px;
+                    background: #17233f;
+                }
+
+                HorizontalLayout {
+                    padding-left: 20px;
+                    padding-right: 20px;
+                    spacing: 14px;
+
+                    Rectangle { width: 80px; HorizontalLayout { alignment: start; Text { text: "Тип"; color: #64748b; font-size: 12px; vertical-alignment: center; } } }
+                    Rectangle { horizontal-stretch: 1; HorizontalLayout { alignment: start; Text { text: "Назва"; color: #64748b; font-size: 12px; vertical-alignment: center; } } }
+                    Rectangle { width: 170px; HorizontalLayout { alignment: start; Text { text: "Категорія"; color: #64748b; font-size: 12px; vertical-alignment: center; } } }
+                    Rectangle { width: 110px; HorizontalLayout { alignment: start; Text { text: "Дата"; color: #64748b; font-size: 12px; vertical-alignment: center; } } }
+                    Rectangle { width: 130px; HorizontalLayout { alignment: start; Text { text: "Оригінальна сума"; color: #64748b; font-size: 12px; vertical-alignment: center; } } }
+                    Rectangle { width: 70px; HorizontalLayout { alignment: start; Text { text: "Курс"; color: #64748b; font-size: 12px; vertical-alignment: center; } } }
+                    Rectangle { width: 120px; HorizontalLayout { alignment: end; Text { text: "Сума (UAH)"; color: #64748b; font-size: 12px; vertical-alignment: center; } } }
+                    Rectangle { width: 36px; HorizontalLayout { alignment: center; Text { text: "Дії"; color: #64748b; font-size: 12px; vertical-alignment: center; } } }
+                }
+            }
+
+            HistoryRow {
+                tx_type: "Дохід";
+                title: "Заробітна плата";
+                category_name: "Зарплата";
+                category_color: #10b981;
+                date_str: "2026-09-26";
+                orig_amount: "48 000,00 ₴";
+                rate_val: "1";
+                uah_amount: "+48 000,00 ₴";
+                is_income: true;
+            }
+
+            HistoryRow {
+                tx_type: "Витрата";
+                title: "Замовлення з Amazon US";
+                category_name: "Покупки / Техніка";
+                category_color: #ec4899;
+                date_str: "2026-09-25";
+                orig_amount: "85,00 $";
+                rate_val: "41.5";
+                uah_amount: "-3 527,50 ₴";
+            }
+
+            HistoryRow {
+                tx_type: "Витрата";
+                title: "Супермаркет Сільпо";
+                category_name: "Продукти";
+                category_color: #38bdf8;
+                date_str: "2026-09-25";
+                orig_amount: "1 250,00 ₴";
+                rate_val: "1";
+                uah_amount: "-1 250,00 ₴";
+            }
+
+            HistoryRow {
+                tx_type: "Витрата";
+                title: "Підписка Spotify (EUR)";
+                category_name: "Розваги";
+                category_color: #f43f5e;
+                date_str: "2026-09-24";
+                orig_amount: "9,99 €";
+                rate_val: "45.2";
+                uah_amount: "-451,55 ₴";
+            }
+
+            HistoryRow {
+                tx_type: "Витрата";
+                title: "Кафе у Варшаві";
+                category_name: "Кафе та ресторани";
+                category_color: #f97316;
+                date_str: "2026-09-23";
+                orig_amount: "45,00 zł";
+                rate_val: "10.6";
+                uah_amount: "-477,00 ₴";
+            }
+        }
+    }
+}
