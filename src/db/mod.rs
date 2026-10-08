@@ -1,3 +1,7 @@
+pub mod models;
+pub mod repository;
+pub mod nbu;
+
 use rusqlite::{Connection, Result};
 use std::fs;
 use std::path::PathBuf;
