@@ -1,0 +1,686 @@
+import { StatCard, RateBadge, BarColumn, CategoryRow } from "components.slint";
+
+// Рядок таблиці останніх витрат на головній
+component ExpenseRow inherits Rectangle {
+    in property <string> title;
+    in property <string> category_name;
+    in property <color> category_color;
+    in property <string> date_str;
+    in property <string> orig_amount;
+    in property <string> rate_badge: "";
+    in property <string> uah_amount;
+
+    height: 38px;
+
+    Rectangle {
+        y: parent.height - 1px;
+        height: 1px;
+        background: #17233f;
+    }
+
+    HorizontalLayout {
+        padding-left: 16px;
+        padding-right: 16px;
+        spacing: 12px;
+
+        Rectangle {
+            width: 250px;
+            HorizontalLayout {
+                alignment: start;
+                Text {
+                    text: root.title;
+                    color: #ffffff;
+                    font-size: 13px;
+                    vertical-alignment: center;
+                    overflow: elide;
+                }
+            }
+        }
+
+        Rectangle {
+            width: 170px;
+            HorizontalLayout {
+                alignment: start;
+                Rectangle {
+                    background: root.category_color.transparentize(85%);
+                    border-radius: 6px;
+                    border-width: 1px;
+                    border-color: root.category_color.transparentize(50%);
+                    height: 24px;
+                    y: (parent.height - self.height) / 2;
+
+                    HorizontalLayout {
+                        padding-left: 10px;
+                        padding-right: 10px;
+                        Text {
+                            text: root.category_name;
+                            color: root.category_color;
+                            font-size: 11px;
+                            font-weight: 600;
+                            vertical-alignment: center;
+                        }
+                    }
+                }
+            }
+        }
+
+        Rectangle {
+            width: 130px;
+            HorizontalLayout {
+                alignment: start;
+                Text {
+                    text: root.date_str;
+                    color: #64748b;
+                    font-size: 13px;
+                    vertical-alignment: center;
+                }
+            }
+        }
+
+        Rectangle {
+            width: 180px;
+            HorizontalLayout {
+                spacing: 8px;
+                alignment: start;
+
+                Text {
+                    text: root.orig_amount;
+                    color: #ffffff;
+                    font-size: 13px;
+                    font-weight: 600;
+                    vertical-alignment: center;
+                }
+
+                if root.rate_badge != "" : Rectangle {
+                    background: #854d0e.transparentize(70%);
+                    border-radius: 4px;
+                    border-width: 1px;
+                    border-color: #eab308.transparentize(60%);
+                    height: 18px;
+                    y: (parent.height - self.height) / 2;
+
+                    HorizontalLayout {
+                        padding-left: 6px;
+                        padding-right: 6px;
+                        Text {
+                            text: root.rate_badge;
+                            color: #facc15;
+                            font-size: 10px;
+                            vertical-alignment: center;
+                        }
+                    }
+                }
+            }
+        }
+
+        Rectangle {
+            horizontal-stretch: 1;
+            HorizontalLayout {
+                alignment: end;
+                Text {
+                    text: root.uah_amount;
+                    color: #f43f5e;
+                    font-size: 13px;
+                    font-weight: 700;
+                    vertical-alignment: center;
+                }
+            }
+        }
+    }
+}
+
+export component OverviewView inherits VerticalLayout {
+    padding: 24px;
+    spacing: 14px;
+
+    // Заголовок сторінки
+    HorizontalLayout {
+        vertical-stretch: 0;
+        alignment: space-between;
+
+        VerticalLayout {
+            spacing: 3px;
+
+            Text {
+                text: "Загальний огляд фінансів";
+                color: #ffffff;
+                font-size: 22px;
+                font-weight: 700;
+            }
+
+            Text {
+                text: "Аналітика з конвертацією іноземних валют у базову UAH (₴)";
+                color: #64748b;
+                font-size: 12px;
+            }
+        }
+
+        VerticalLayout {
+            alignment: center;
+
+            Rectangle {
+                background: #0b132b;
+                border-radius: 8px;
+                border-width: 1px;
+                border-color: #1e293b;
+                height: 36px;
+
+                HorizontalLayout {
+                    padding-left: 6px;
+                    padding-right: 6px;
+                    padding-top: 3px;
+                    padding-bottom: 3px;
+                    spacing: 4px;
+                    alignment: center;
+
+                    Rectangle {
+                        background: transparent;
+                        border-radius: 6px;
+                        HorizontalLayout {
+                            padding-left: 10px;
+                            padding-right: 10px;
+                            Text { text: "Річний звіт"; color: #64748b; font-size: 12px; vertical-alignment: center; }
+                        }
+                    }
+
+                    Rectangle {
+                        background: transparent;
+                        border-radius: 6px;
+                        HorizontalLayout {
+                            padding-left: 10px;
+                            padding-right: 10px;
+                            Text { text: "Поквартально"; color: #64748b; font-size: 12px; vertical-alignment: center; }
+                        }
+                    }
+
+                    Rectangle {
+                        background: #0284c7;
+                        border-radius: 6px;
+                        HorizontalLayout {
+                            padding-left: 12px;
+                            padding-right: 12px;
+                            Text { text: "Помісячно"; color: #ffffff; font-size: 12px; font-weight: 600; vertical-alignment: center; }
+                        }
+                    }
+
+                    Rectangle {
+                        background: transparent;
+                        border-radius: 6px;
+                        HorizontalLayout {
+                            padding-left: 10px;
+                            padding-right: 10px;
+                            Text { text: "Сьогодні"; color: #64748b; font-size: 12px; vertical-alignment: center; }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // Панель курсів валют
+    Rectangle {
+        vertical-stretch: 0;
+        background: #0f172a;
+        border-radius: 12px;
+        border-width: 1px;
+        border-color: #1e293b;
+        height: 52px;
+
+        HorizontalLayout {
+            padding-left: 14px;
+            padding-right: 14px;
+            alignment: space-between;
+
+            HorizontalLayout {
+                spacing: 12px;
+                alignment: start;
+
+                VerticalLayout {
+                    alignment: center;
+                    Rectangle {
+                        width: 34px;
+                        height: 34px;
+                        background: #17233f;
+                        border-radius: 8px;
+
+                        Text {
+                            text: "🏛";
+                            font-size: 16px;
+                            color: #38bdf8;
+                            horizontal-alignment: center;
+                            vertical-alignment: center;
+                        }
+                    }
+                }
+
+                VerticalLayout {
+                    alignment: center;
+                    spacing: 2px;
+
+                    HorizontalLayout {
+                        spacing: 8px;
+                        alignment: start;
+
+                        Text {
+                            text: "Курси Міжбанку / НБУ";
+                            color: #ffffff;
+                            font-size: 13px;
+                            font-weight: 600;
+                        }
+
+                        Text {
+                            text: "Оновлено: 00:36";
+                            color: #64748b;
+                            font-size: 11px;
+                            vertical-alignment: center;
+                        }
+                    }
+
+                    Text {
+                        text: "Використовуються для автоперерахунку іноземних валют у UAH";
+                        color: #64748b;
+                        font-size: 11px;
+                    }
+                }
+            }
+
+            VerticalLayout {
+                alignment: center;
+
+                HorizontalLayout {
+                    spacing: 8px;
+                    alignment: end;
+
+                    RateBadge { currency: "USD"; rate: "44.84 ₴"; }
+                    RateBadge { currency: "EUR"; rate: "51.14 ₴"; }
+                    RateBadge { currency: "PLN"; rate: "11.70 ₴"; }
+                    RateBadge { currency: "GBP"; rate: "59.42 ₴"; }
+
+                    Rectangle {
+                        width: 30px;
+                        height: 30px;
+                        background: #0284c7;
+                        border-radius: 8px;
+
+                        Text {
+                            text: "↻";
+                            color: #ffffff;
+                            font-size: 15px;
+                            horizontal-alignment: center;
+                            vertical-alignment: center;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // Рядок карток статистики
+    HorizontalLayout {
+        vertical-stretch: 0;
+        spacing: 14px;
+
+        StatCard {
+            title: "Загальний баланс";
+            value: "42 293,95 ₴";
+            subtitle: "Чистий залишок у UAH";
+            has_accent: true;
+            accent_bar_color: #0284c7;
+            icon_symbol: "⚖";
+            icon_color: #38bdf8;
+        }
+
+        StatCard {
+            title: "Загальний дохід";
+            value: "+48 000,00 ₴";
+            subtitle: "Усі надходження";
+            value_color: #10b981;
+            has_accent: true;
+            accent_bar_color: #10b981;
+            icon_symbol: "↗";
+            icon_color: #10b981;
+        }
+
+        StatCard {
+            title: "Загальні витрати";
+            value: "-5 706,05 ₴";
+            subtitle: "Еквівалент у гривні";
+            value_color: #f43f5e;
+            has_accent: true;
+            accent_bar_color: #f43f5e;
+            icon_symbol: "↘";
+            icon_color: #f43f5e;
+        }
+    }
+
+    // Секція графіка та часток витрат (38%)
+    HorizontalLayout {
+        vertical-stretch: 38;
+        spacing: 14px;
+
+        // Графік зі шкалою
+        Rectangle {
+            horizontal-stretch: 2;
+            background: #0f172a;
+            border-radius: 14px;
+            border-width: 1px;
+            border-color: #1e293b;
+
+            VerticalLayout {
+                padding: 18px;
+                spacing: 10px;
+
+                HorizontalLayout {
+                    vertical-stretch: 0;
+                    alignment: space-between;
+
+                    Text {
+                        text: "Аналіз витрат по категоріях";
+                        color: #ffffff;
+                        font-size: 15px;
+                        font-weight: 700;
+                        vertical-alignment: center;
+                    }
+
+                    Rectangle {
+                        background: #070d1e;
+                        border-radius: 8px;
+                        border-width: 1px;
+                        border-color: #1e293b;
+                        height: 32px;
+
+                        HorizontalLayout {
+                            padding-left: 6px;
+                            padding-right: 6px;
+                            padding-top: 3px;
+                            padding-bottom: 3px;
+                            spacing: 4px;
+                            alignment: center;
+
+                            Rectangle {
+                                background: transparent;
+                                border-radius: 6px;
+
+                                HorizontalLayout {
+                                    padding-left: 8px;
+                                    padding-right: 8px;
+                                    spacing: 6px;
+
+                                    Text { text: "◔"; color: #64748b; font-size: 12px; vertical-alignment: center; }
+                                    Text { text: "Кругова"; color: #64748b; font-size: 12px; vertical-alignment: center; }
+                                }
+                            }
+
+                            Rectangle {
+                                background: #0284c7;
+                                border-radius: 6px;
+
+                                HorizontalLayout {
+                                    padding-left: 10px;
+                                    padding-right: 10px;
+                                    spacing: 6px;
+
+                                    Text { text: "📊"; color: #ffffff; font-size: 12px; vertical-alignment: center; }
+                                    Text { text: "Стовпчаста"; color: #ffffff; font-size: 12px; font-weight: 600; vertical-alignment: center; }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                HorizontalLayout {
+                    vertical-stretch: 1;
+                    spacing: 14px;
+
+                    VerticalLayout {
+                        alignment: space-between;
+                        width: 38px;
+                        padding-bottom: 24px;
+
+                        Text { text: "4 500"; color: #64748b; font-size: 10px; horizontal-alignment: end; }
+                        Text { text: "4 000"; color: #64748b; font-size: 10px; horizontal-alignment: end; }
+                        Text { text: "3 500"; color: #64748b; font-size: 10px; horizontal-alignment: end; }
+                        Text { text: "3 000"; color: #64748b; font-size: 10px; horizontal-alignment: end; }
+                        Text { text: "2 500"; color: #64748b; font-size: 10px; horizontal-alignment: end; }
+                        Text { text: "2 000"; color: #64748b; font-size: 10px; horizontal-alignment: end; }
+                        Text { text: "1 500"; color: #64748b; font-size: 10px; horizontal-alignment: end; }
+                        Text { text: "1 000"; color: #64748b; font-size: 10px; horizontal-alignment: end; }
+                        Text { text: "500";   color: #64748b; font-size: 10px; horizontal-alignment: end; }
+                        Text { text: "0";     color: #64748b; font-size: 10px; horizontal-alignment: end; }
+                    }
+
+                    Rectangle {
+                        horizontal-stretch: 1;
+
+                        VerticalLayout {
+                            alignment: space-between;
+                            padding-bottom: 24px;
+
+                            Rectangle { height: 1px; background: #17233f; }
+                            Rectangle { height: 1px; background: #17233f; }
+                            Rectangle { height: 1px; background: #17233f; }
+                            Rectangle { height: 1px; background: #17233f; }
+                            Rectangle { height: 1px; background: #17233f; }
+                            Rectangle { height: 1px; background: #17233f; }
+                            Rectangle { height: 1px; background: #17233f; }
+                            Rectangle { height: 1px; background: #17233f; }
+                            Rectangle { height: 1px; background: #17233f; }
+                            Rectangle { height: 1px; background: #1e293b; }
+                        }
+
+                        HorizontalLayout {
+                            alignment: space-evenly;
+                            padding-bottom: 24px;
+
+                            Rectangle { width: 1px; background: #121d38; }
+                            Rectangle { width: 1px; background: #121d38; }
+                            Rectangle { width: 1px; background: #121d38; }
+                            Rectangle { width: 1px; background: #121d38; }
+                        }
+
+                        HorizontalLayout {
+                            alignment: space-around;
+                            padding-bottom: 4px;
+
+                            BarColumn { label: "Покупки / Техніка"; fill_share: 78; empty_share: 22; bar_color: #ec4899; }
+                            BarColumn { label: "Продукти"; fill_share: 28; empty_share: 72; bar_color: #38bdf8; }
+                            BarColumn { label: "Кафе та ресторани"; fill_share: 11; empty_share: 89; bar_color: #f97316; }
+                            BarColumn { label: "Розваги"; fill_share: 10; empty_share: 90; bar_color: #f43f5e; }
+                        }
+                    }
+                }
+            }
+        }
+
+        // Права картка з часток
+        Rectangle {
+            horizontal-stretch: 1;
+            background: #0f172a;
+            border-radius: 14px;
+            border-width: 1px;
+            border-color: #1e293b;
+
+            VerticalLayout {
+                padding: 18px;
+                spacing: 12px;
+                alignment: start;
+
+                HorizontalLayout {
+                    alignment: space-between;
+
+                    Text { text: "Розподіл витрат"; color: #ffffff; font-size: 15px; font-weight: 700; }
+                    Text { text: "Частка у %"; color: #64748b; font-size: 12px; }
+                }
+
+                Rectangle { height: 1px; background: #1e293b; }
+
+                CategoryRow { dot_color: #ec4899; title: "Покупки / Техніка"; amount: "3 528 ₴"; percentage: "(62%)"; progress: 0.62; }
+                CategoryRow { dot_color: #38bdf8; title: "Продукти"; amount: "1 250 ₴"; percentage: "(22%)"; progress: 0.22; }
+                CategoryRow { dot_color: #f97316; title: "Кафе та ресторани"; amount: "477 ₴"; percentage: "(8%)"; progress: 0.08; }
+                CategoryRow { dot_color: #f43f5e; title: "Розваги"; amount: "452 ₴"; percentage: "(8%)"; progress: 0.08; }
+            }
+        }
+    }
+
+    // Нижня секція: Останні 5 доданих витрат (26%)
+    Rectangle {
+        vertical-stretch: 26;
+        background: #0f172a;
+        border-radius: 14px;
+        border-width: 1px;
+        border-color: #1e293b;
+
+        VerticalLayout {
+            padding-left: 18px;
+            padding-right: 18px;
+            padding-top: 12px;
+            padding-bottom: 12px;
+            spacing: 8px;
+
+            HorizontalLayout {
+                vertical-stretch: 0;
+                alignment: space-between;
+
+                HorizontalLayout {
+                    spacing: 8px;
+                    alignment: start;
+
+                    Text {
+                        text: "↺";
+                        color: #38bdf8;
+                        font-size: 15px;
+                        vertical-alignment: center;
+                    }
+
+                    Text {
+                        text: "Останні 5 доданих витрат";
+                        color: #ffffff;
+                        font-size: 14px;
+                        font-weight: 700;
+                        vertical-alignment: center;
+                    }
+                }
+
+                HorizontalLayout {
+                    spacing: 10px;
+                    alignment: end;
+
+                    Rectangle {
+                        width: 130px;
+                        height: 28px;
+                        background: #070d1e;
+                        border-radius: 6px;
+                        border-width: 1px;
+                        border-color: #1e293b;
+
+                        HorizontalLayout {
+                            padding-left: 10px;
+                            padding-right: 10px;
+                            alignment: space-between;
+
+                            Text { text: "Всі категорії"; color: #94a3b8; font-size: 11px; vertical-alignment: center; }
+                            Text { text: "⌵"; color: #64748b; font-size: 10px; vertical-alignment: center; }
+                        }
+                    }
+
+                    Rectangle {
+                        width: 120px;
+                        height: 28px;
+                        background: #070d1e;
+                        border-radius: 6px;
+                        border-width: 1px;
+                        border-color: #1e293b;
+
+                        HorizontalLayout {
+                            padding-left: 10px;
+                            padding-right: 10px;
+                            alignment: space-between;
+
+                            Text { text: "дд . мм . рррр"; color: #64748b; font-size: 11px; vertical-alignment: center; }
+                            Text { text: "📅"; color: #38bdf8; font-size: 11px; vertical-alignment: center; }
+                        }
+                    }
+
+                    Rectangle {
+                        width: 28px;
+                        height: 28px;
+                        background: #070d1e;
+                        border-radius: 6px;
+                        border-width: 1px;
+                        border-color: #1e293b;
+
+                        Text {
+                            text: "↻";
+                            color: #94a3b8;
+                            font-size: 13px;
+                            horizontal-alignment: center;
+                            vertical-alignment: center;
+                        }
+                    }
+                }
+            }
+
+            Rectangle {
+                vertical-stretch: 0;
+                height: 26px;
+
+                Rectangle {
+                    y: parent.height - 1px;
+                    height: 1px;
+                    background: #17233f;
+                }
+
+                HorizontalLayout {
+                    padding-left: 16px;
+                    padding-right: 16px;
+                    spacing: 12px;
+
+                    Rectangle { width: 250px; HorizontalLayout { alignment: start; Text { text: "Назва / Опис"; color: #64748b; font-size: 12px; vertical-alignment: center; } } }
+                    Rectangle { width: 170px; HorizontalLayout { alignment: start; Text { text: "Категорія"; color: #64748b; font-size: 12px; vertical-alignment: center; } } }
+                    Rectangle { width: 130px; HorizontalLayout { alignment: start; Text { text: "Дата"; color: #64748b; font-size: 12px; vertical-alignment: center; } } }
+                    Rectangle { width: 180px; HorizontalLayout { alignment: start; Text { text: "Оригінальна сума"; color: #64748b; font-size: 12px; vertical-alignment: center; } } }
+                    Rectangle { horizontal-stretch: 1; HorizontalLayout { alignment: end; Text { text: "Еквівалент (UAH)"; color: #64748b; font-size: 12px; vertical-alignment: center; } } }
+                }
+            }
+
+            ExpenseRow {
+                title: "Замовлення з Amazon US";
+                category_name: "Покупки / Техніка";
+                category_color: #ec4899;
+                date_str: "2026-09-25";
+                orig_amount: "85,00 $";
+                rate_badge: "Курс: 41.5";
+                uah_amount: "-3 527,50 ₴";
+            }
+
+            ExpenseRow {
+                title: "Супермаркет Сільпо";
+                category_name: "Продукти";
+                category_color: #38bdf8;
+                date_str: "2026-09-25";
+                orig_amount: "1 250,00 ₴";
+                uah_amount: "-1 250,00 ₴";
+            }
+
+            ExpenseRow {
+                title: "Підписка Spotify (EUR)";
+                category_name: "Розваги";
+                category_color: #f43f5e;
+                date_str: "2026-09-24";
+                orig_amount: "9,99 €";
+                rate_badge: "Курс: 45.2";
+                uah_amount: "-451,55 ₴";
+            }
+
+            ExpenseRow {
+                title: "Кафе у Варшаві";
+                category_name: "Кафе та ресторани";
+                category_color: #f97316;
+                date_str: "2026-09-23";
+                orig_amount: "45,00 zł";
+                rate_badge: "Курс: 10.6";
+                uah_amount: "-477,00 ₴";
+            }
+        }
+    }
+}

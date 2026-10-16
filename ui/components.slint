@@ -1,0 +1,281 @@
+// Картка статистики
+export component StatCard inherits Rectangle {
+    in property <string> title;
+    in property <string> value;
+    in property <string> subtitle;
+    in property <color> value_color: #ffffff;
+    in property <color> accent_bar_color: transparent;
+    in property <string> icon_symbol: "";
+    in property <color> icon_color: #38bdf8;
+    in property <bool> has_accent: false;
+
+    min-width: 0px;
+    preferred-width: 0px;
+    horizontal-stretch: 1;
+
+    background: #0f172a;
+    border-radius: 14px;
+    border-width: 1px;
+    border-color: #1e293b;
+    height: 110px;
+
+    HorizontalLayout {
+        padding: 0px;
+        spacing: 0px;
+
+        if root.has_accent : Rectangle {
+            width: 5px;
+            background: root.accent_bar_color;
+            border-top-left-radius: 14px;
+            border-bottom-left-radius: 14px;
+        }
+
+        HorizontalLayout {
+            padding-left: 18px;
+            padding-right: 18px;
+            padding-top: 14px;
+            padding-bottom: 14px;
+            spacing: 12px;
+
+            VerticalLayout {
+                alignment: space-between;
+
+                Text {
+                    text: root.title;
+                    color: #94a3b8;
+                    font-size: 13px;
+                }
+
+                Text {
+                    text: root.value;
+                    color: root.value_color;
+                    font-size: 22px;
+                    font-weight: 700;
+                }
+
+                Text {
+                    text: root.subtitle;
+                    color: #38bdf8;
+                    font-size: 11px;
+                }
+            }
+
+            Rectangle {
+                width: 48px;
+                height: 48px;
+                background: #111e38;
+                border-radius: 12px;
+                y: (parent.height - self.height) / 2;
+
+                Text {
+                    text: root.icon_symbol;
+                    color: root.icon_color;
+                    font-size: 20px;
+                    horizontal-alignment: center;
+                    vertical-alignment: center;
+                }
+            }
+        }
+    }
+}
+
+// Елемент меню в сайдбарі
+export component NavItem inherits Rectangle {
+    in property <string> text;
+    in property <string> icon_symbol: "";
+    in property <bool> active: false;
+    callback clicked();
+
+    height: 44px;
+    border-radius: 8px;
+    background: root.active ? #17233f : transparent;
+
+    TouchArea {
+        clicked => { root.clicked(); }
+    }
+
+    HorizontalLayout {
+        padding-left: 14px;
+        spacing: 12px;
+        alignment: start;
+
+        if root.icon_symbol != "" : Text {
+            text: root.icon_symbol;
+            color: root.active ? #38bdf8 : #64748b;
+            font-size: 16px;
+            vertical-alignment: center;
+        }
+
+        Text {
+            text: root.text;
+            color: root.active ? #ffffff : #94a3b8;
+            font-size: 14px;
+            font-weight: root.active ? 600 : 400;
+            vertical-alignment: center;
+        }
+    }
+}
+
+// Кнопка дій
+export component AppButton inherits Rectangle {
+    in property <string> text;
+    in property <color> btn_color: #2563eb;
+    in property <color> hover_color: #1d4ed8;
+    callback clicked();
+
+    height: 44px;
+    border-radius: 10px;
+    background: touch.has-hover ? root.hover_color : root.btn_color;
+    animate background { duration: 150ms; }
+
+    touch := TouchArea {
+        clicked => { root.clicked(); }
+    }
+
+    Text {
+        text: root.text;
+        color: #ffffff;
+        font-size: 14px;
+        font-weight: 600;
+        horizontal-alignment: center;
+        vertical-alignment: center;
+    }
+}
+
+// Плашка курсу валюти
+export component RateBadge inherits Rectangle {
+    in property <string> currency;
+    in property <string> rate;
+
+    height: 30px;
+    background: #0b132b;
+    border-radius: 8px;
+    border-width: 1px;
+    border-color: #1e293b;
+
+    HorizontalLayout {
+        padding-left: 10px;
+        padding-right: 10px;
+        spacing: 6px;
+        alignment: center;
+
+        Text {
+            text: root.currency + ":";
+            color: #94a3b8;
+            font-size: 12px;
+            font-weight: 600;
+            vertical-alignment: center;
+        }
+
+        Text {
+            text: root.rate;
+            color: #38bdf8;
+            font-size: 12px;
+            font-weight: 700;
+            vertical-alignment: center;
+        }
+    }
+}
+
+// Стовпчик для графіка
+export component BarColumn inherits VerticalLayout {
+    in property <string> label;
+    in property <int> fill_share: 10;
+    in property <int> empty_share: 90;
+    in property <color> bar_color;
+
+    spacing: 8px;
+    width: 84px;
+
+    VerticalLayout {
+        vertical-stretch: 1;
+
+        Rectangle {
+            vertical-stretch: root.empty_share;
+        }
+
+        Rectangle {
+            vertical-stretch: root.fill_share;
+            background: root.bar_color;
+            border-top-left-radius: 6px;
+            border-top-right-radius: 6px;
+        }
+    }
+
+    Text {
+        vertical-stretch: 0;
+        text: root.label;
+        color: #94a3b8;
+        font-size: 11px;
+        horizontal-alignment: center;
+    }
+}
+
+// Рядок категорії зі смужкою співвідношення
+export component CategoryRow inherits VerticalLayout {
+    in property <color> dot_color;
+    in property <string> title;
+    in property <string> amount;
+    in property <string> percentage;
+    in property <float> progress: 0.0;
+
+    spacing: 6px;
+
+    HorizontalLayout {
+        alignment: space-between;
+
+        HorizontalLayout {
+            spacing: 8px;
+            alignment: start;
+
+            Rectangle {
+                width: 8px;
+                height: 8px;
+                border-radius: 4px;
+                background: root.dot_color;
+                y: (parent.height - self.height) / 2;
+            }
+
+            Text {
+                text: root.title;
+                color: #ffffff;
+                font-size: 13px;
+                vertical-alignment: center;
+            }
+        }
+
+        HorizontalLayout {
+            spacing: 6px;
+            alignment: end;
+
+            Text {
+                text: root.amount;
+                color: #ffffff;
+                font-size: 13px;
+                font-weight: 700;
+                vertical-alignment: center;
+            }
+
+            Text {
+                text: root.percentage;
+                color: #64748b;
+                font-size: 12px;
+                vertical-alignment: center;
+            }
+        }
+    }
+
+    Rectangle {
+        height: 3px;
+        border-radius: 1.5px;
+        background: #17233f;
+
+        Rectangle {
+            x: 0px;
+            width: parent.width * root.progress;
+            height: parent.height;
+            border-radius: 1.5px;
+            background: root.dot_color;
+        }
+    }
+}

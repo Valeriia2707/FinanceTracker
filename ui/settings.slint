@@ -1,0 +1,401 @@
+// Тег категорії з кольоровою цяткою та кнопкою видалення
+component CategoryTag inherits Rectangle {
+    in property <string> text;
+    in property <color> dot_color: #38bdf8;
+    callback remove();
+
+    height: 32px;
+    background: #070d1e;
+    border-radius: 8px;
+    border-width: 1px;
+    border-color: #1e293b;
+
+    HorizontalLayout {
+        padding-left: 10px;
+        padding-right: 10px;
+        spacing: 8px;
+        alignment: center;
+
+        // Кольорова цятка
+        Rectangle {
+            width: 6px;
+            height: 6px;
+            border-radius: 3px;
+            background: root.dot_color;
+            y: (parent.height - self.height) / 2;
+        }
+
+        Text {
+            text: root.text;
+            color: #ffffff;
+            font-size: 12px;
+            vertical-alignment: center;
+        }
+
+        // Кнопка видалення
+        Text {
+            text: "✕";
+            color: #64748b;
+            font-size: 10px;
+            vertical-alignment: center;
+        }
+    }
+}
+
+// Поле курсу валюти
+component CurrencyField inherits VerticalLayout {
+    in property <string> label;
+    in property <string> value;
+
+    spacing: 6px;
+    horizontal-stretch: 1;
+
+    Text {
+        text: root.label;
+        color: #94a3b8;
+        font-size: 12px;
+    }
+
+    Rectangle {
+        height: 38px;
+        background: #070d1e;
+        border-radius: 8px;
+        border-width: 1px;
+        border-color: #1e293b;
+
+        HorizontalLayout {
+            padding-left: 12px;
+            padding-right: 10px;
+            alignment: space-between;
+
+            Text {
+                text: root.value;
+                color: #ffffff;
+                font-size: 13px;
+                vertical-alignment: center;
+            }
+
+            // Стрілочки спіннера
+            VerticalLayout {
+                alignment: center;
+                spacing: 1px;
+
+                Text { text: "▴"; color: #64748b; font-size: 8px; }
+                Text { text: "▾"; color: #64748b; font-size: 8px; }
+            }
+        }
+    }
+}
+
+export component SettingsView inherits VerticalLayout {
+    padding: 24px;
+    spacing: 20px;
+    alignment: start;
+
+    // 1. Шапка сторінки
+    VerticalLayout {
+        spacing: 14px;
+
+        VerticalLayout {
+            spacing: 4px;
+
+            Text {
+                text: "Налаштування додатку та курсів";
+                color: #ffffff;
+                font-size: 22px;
+                font-weight: 700;
+            }
+
+            Text {
+                text: "Керування курсами міжбанку, основними валютами та категоріями";
+                color: #64748b;
+                font-size: 12px;
+            }
+        }
+
+        Rectangle {
+            height: 1px;
+            background: #1e293b;
+        }
+    }
+
+    // 2. Верхня картка: Налаштування курсів валют
+    Rectangle {
+        background: #0f172a;
+        border-radius: 14px;
+        border-width: 1px;
+        border-color: #1e293b;
+
+        HorizontalLayout {
+            padding: 0px;
+            spacing: 0px;
+
+            // Блакитний акцент зліва
+            Rectangle {
+                width: 5px;
+                background: #0284c7;
+                border-top-left-radius: 14px;
+                border-bottom-left-radius: 14px;
+            }
+
+            VerticalLayout {
+                padding: 22px;
+                spacing: 16px;
+
+                // Заголовок картки з кнопкою оновлення
+                HorizontalLayout {
+                    alignment: space-between;
+
+                    HorizontalLayout {
+                        spacing: 10px;
+                        alignment: start;
+
+                        Text {
+                            text: "🪙";
+                            font-size: 16px;
+                            color: #38bdf8;
+                            vertical-alignment: center;
+                        }
+
+                        Text {
+                            text: "Налаштування курсів валют (Міжбанк / НБУ)";
+                            color: #ffffff;
+                            font-size: 15px;
+                            font-weight: 700;
+                            vertical-alignment: center;
+                        }
+                    }
+
+                    // Синя кнопка "Оновити курси з НБУ"
+                    Rectangle {
+                        height: 34px;
+                        background: #0284c7;
+                        border-radius: 8px;
+
+                        HorizontalLayout {
+                            padding-left: 12px;
+                            padding-right: 12px;
+                            spacing: 6px;
+                            alignment: center;
+
+                            Text {
+                                text: "↻";
+                                color: #ffffff;
+                                font-size: 13px;
+                                vertical-alignment: center;
+                            }
+
+                            Text {
+                                text: "Оновити курси з НБУ";
+                                color: #ffffff;
+                                font-size: 12px;
+                                font-weight: 600;
+                                vertical-alignment: center;
+                            }
+                        }
+                    }
+                }
+
+                Text {
+                    text: "Вкажіть актуальні курси купівлі/продажу валют у гривні. Вони автоматично підставлятимуться при додаванні нових витрат.";
+                    color: #64748b;
+                    font-size: 12px;
+                }
+
+                // Чотири інпути валют
+                HorizontalLayout {
+                    spacing: 16px;
+
+                    CurrencyField { label: "USD ($)"; value: "44,84"; }
+                    CurrencyField { label: "EUR (€)"; value: "51,14"; }
+                    CurrencyField { label: "PLN (zł)"; value: "11,7"; }
+                    CurrencyField { label: "GBP (£)"; value: "59,42"; }
+                }
+            }
+        }
+    }
+
+    // 3. Нижня секція: Параметри та Категорії
+    HorizontalLayout {
+        spacing: 16px;
+
+        // Ліва картка: Параметри відображення
+        Rectangle {
+            horizontal-stretch: 1;
+            background: #0f172a;
+            border-radius: 14px;
+            border-width: 1px;
+            border-color: #1e293b;
+
+            VerticalLayout {
+                padding: 22px;
+                spacing: 18px;
+                alignment: start;
+
+                HorizontalLayout {
+                    spacing: 10px;
+                    alignment: start;
+
+                    Text {
+                        text: "⚙";
+                        font-size: 16px;
+                        color: #38bdf8;
+                        vertical-alignment: center;
+                    }
+
+                    Text {
+                        text: "Параметри відображення";
+                        color: #ffffff;
+                        font-size: 15px;
+                        font-weight: 700;
+                        vertical-alignment: center;
+                    }
+                }
+
+                Rectangle { height: 1px; background: #1e293b; }
+
+                VerticalLayout {
+                    spacing: 8px;
+
+                    Text {
+                        text: "Основна валюта звітності";
+                        color: #94a3b8;
+                        font-size: 12px;
+                    }
+
+                    Rectangle {
+                        height: 38px;
+                        background: #070d1e;
+                        border-radius: 8px;
+                        border-width: 1px;
+                        border-color: #1e293b;
+
+                        HorizontalLayout {
+                            padding-left: 12px;
+                            padding-right: 12px;
+                            alignment: space-between;
+
+                            Text {
+                                text: "UAH (₴) - Українська гривня (За замовчуванням)";
+                                color: #ffffff;
+                                font-size: 12px;
+                                vertical-alignment: center;
+                            }
+
+                            Text {
+                                text: "⌵";
+                                color: #64748b;
+                                font-size: 10px;
+                                vertical-alignment: center;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // Права картка: Управління категоріями
+        Rectangle {
+            horizontal-stretch: 1;
+            background: #0f172a;
+            border-radius: 14px;
+            border-width: 1px;
+            border-color: #1e293b;
+
+            VerticalLayout {
+                padding: 22px;
+                spacing: 16px;
+                alignment: start;
+
+                HorizontalLayout {
+                    spacing: 10px;
+                    alignment: start;
+
+                    Text {
+                        text: "📁";
+                        font-size: 16px;
+                        color: #ec4899;
+                        vertical-alignment: center;
+                    }
+
+                    Text {
+                        text: "Управління категоріями";
+                        color: #ffffff;
+                        font-size: 15px;
+                        font-weight: 700;
+                        vertical-alignment: center;
+                    }
+                }
+
+                Rectangle { height: 1px; background: #1e293b; }
+
+                // Поле вводу та кнопка додавання
+                HorizontalLayout {
+                    spacing: 10px;
+
+                    Rectangle {
+                        horizontal-stretch: 1;
+                        height: 38px;
+                        background: #070d1e;
+                        border-radius: 8px;
+                        border-width: 1px;
+                        border-color: #1e293b;
+
+                        HorizontalLayout {
+                            padding-left: 12px;
+                            padding-right: 12px;
+                            Text {
+                                text: "Нова категорія...";
+                                color: #64748b;
+                                font-size: 12px;
+                                vertical-alignment: center;
+                            }
+                        }
+                    }
+
+                    Rectangle {
+                        width: 90px;
+                        height: 38px;
+                        background: #2563eb;
+                        border-radius: 8px;
+
+                        Text {
+                            text: "+ Додати";
+                            color: #ffffff;
+                            font-size: 12px;
+                            font-weight: 600;
+                            horizontal-alignment: center;
+                            vertical-alignment: center;
+                        }
+                    }
+                }
+
+                // Сітка наявних категорій
+                VerticalLayout {
+                    spacing: 10px;
+
+                    HorizontalLayout {
+                        spacing: 8px;
+                        CategoryTag { text: "Продукти"; dot_color: #38bdf8; }
+                        CategoryTag { text: "Кафе та ресторани"; dot_color: #f97316; }
+                        CategoryTag { text: "Транспорт"; dot_color: #8b5cf6; }
+                    }
+
+                    HorizontalLayout {
+                        spacing: 8px;
+                        CategoryTag { text: "Розваги"; dot_color: #f43f5e; }
+                        CategoryTag { text: "Комунальні послуги"; dot_color: #eab308; }
+                        CategoryTag { text: "Покупки / Техніка"; dot_color: #ec4899; }
+                    }
+
+                    HorizontalLayout {
+                        spacing: 8px;
+                        CategoryTag { text: "Здоров'я"; dot_color: #10b981; }
+                        CategoryTag { text: "Зарплата"; dot_color: #06b6d4; }
+                        CategoryTag { text: "Інше"; dot_color: #64748b; }
+                    }
+                }
+            }
+        }
+    }
+}

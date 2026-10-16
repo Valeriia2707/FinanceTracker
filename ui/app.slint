@@ -1,0 +1,103 @@
+import { NavItem, AppButton } from "components.slint";
+import { OverviewView } from "overview.slint";
+import { HistoryView } from "history.slint";
+import { SettingsView } from "settings.slint";
+
+export component MainWindow inherits Window {
+    title: "FinanceTracker";
+    preferred-width: 1380px;
+    preferred-height: 860px;
+    background: #070d1e;
+
+    in-out property <int> active_tab: 0;
+
+    HorizontalLayout {
+        padding: 0px;
+        spacing: 0px;
+
+        // Лівий сайдбар
+        Rectangle {
+            width: 250px;
+            background: #0b132b;
+
+            VerticalLayout {
+                padding: 24px;
+                alignment: space-between;
+
+                VerticalLayout {
+                    spacing: 8px;
+                    alignment: start;
+
+                    HorizontalLayout {
+                        padding-bottom: 24px;
+                        spacing: 12px;
+                        alignment: start;
+
+                        Rectangle {
+                            width: 38px;
+                            height: 38px;
+                            background: #0284c7;
+                            border-radius: 19px;
+
+                            Text {
+                                text: "👤";
+                                font-size: 16px;
+                                color: #ffffff;
+                                horizontal-alignment: center;
+                                vertical-alignment: center;
+                            }
+                        }
+
+                        VerticalLayout {
+                            alignment: center;
+                            spacing: 2px;
+
+                            Text {
+                                text: "Мій Гаманець";
+                                font-size: 15px;
+                                font-weight: 700;
+                                color: #ffffff;
+                            }
+
+                            Text {
+                                text: "Мультивалютний облік";
+                                font-size: 11px;
+                                color: #64748b;
+                            }
+                        }
+                    }
+
+                    NavItem {
+                        text: "Загальне";
+                        icon_symbol: "◷";
+                        active: root.active_tab == 0;
+                        clicked => { root.active_tab = 0; }
+                    }
+                    NavItem {
+                        text: "Історія";
+                        icon_symbol: "↺";
+                        active: root.active_tab == 1;
+                        clicked => { root.active_tab = 1; }
+                    }
+                    NavItem {
+                        text: "Налаштування";
+                        icon_symbol: "⚙";
+                        active: root.active_tab == 2;
+                        clicked => { root.active_tab = 2; }
+                    }
+                }
+
+                AppButton {
+                    text: "+ Додати витрату";
+                }
+            }
+        }
+
+        // Права робоча область
+        Rectangle {
+            if root.active_tab == 0 : OverviewView {}
+            if root.active_tab == 1 : HistoryView {}
+            if root.active_tab == 2 : SettingsView {}
+        }
+    }
+}
